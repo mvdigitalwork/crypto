@@ -150,7 +150,7 @@ function handleSignup() {
                 localStorage.setItem('currentUserIdentifier', identifier); 
                 
                 setTimeout(() => {
-                    window.location.href = './dashboard.html';
+                    window.location.href = './index.html';
                 }, 1000); 
                 
             } else {
@@ -200,7 +200,7 @@ function handleLogin() {
                 localStorage.setItem('currentUserIdentifier', username); 
                 
                 setTimeout(() => {
-                    window.location.href = './dashboard.html';
+                    window.location.href = './index.html';
                 }, 1000);
             } else {
                 Toastify({ text: `❌ Login failed: Invalid credentials.`, ...toastErrorConfig }).showToast();
