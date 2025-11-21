@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Balance Change Log — CryptoWin</title>
+     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="./js/auth-guard.js" defer></script>
+</head>
+<body class="min-h-screen">
+    <div id="preloader"><div class="spinner"></div></div>
+    <div id="sidebar-container"></div>
+    <div class="lg:ml-64">
+        <div id="header-container"></div>
+        <main class="p-4 sm:p-6">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-8">Balance Change Log</h2>
+            <div class="glass rounded-xl p-4 sm:p-6 border border-white/5">
+                <ul id="log-list" class="space-y-4">
+                    </ul>
+            </div>
+        </main>
+        <div id="footer-container"></div>
+    </div>
+    <script src="./js/main.js"></script>
+    <script src="./js/app-logic.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // This re-uses the renderActivities function from app-logic.js
+            // to show the same log data from localStorage
+            renderActivities(); 
+        });
+    </script>
+</head>
+</html>

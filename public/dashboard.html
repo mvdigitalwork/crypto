@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>Dashboard — CryptoWin</title>
+
+    <meta name="description" content="Track your daily profits and referral bonuses on the CryptoWin dashboard.">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <meta property="og:title" content="CryptoWin — Dashboard">
+    <meta property="og:description" content="Track your daily profits and referral bonuses.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="./js/auth-guard.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+    <style>
+        /* Define the height for the main charts */
+        #growthChart, #allocationChart {
+            max-height: 250px;
+        }
+        /* Optional: smooth fade-in animation for popup */
+        #welcome-modal { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        #welcome-modal:not(.hidden) {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="sidebar-container"></div>
+
+    <div class="lg:ml-64 transition-all duration-300 ease-in-out">
+        <div id="header-container"></div>
+<main class="p-4 sm:p-6">
+    
+    <div class="mb-8 p-4 rounded-xl text-center" style="background: linear-gradient(90deg, #1f2937, #0f172a);">
+        <h1 class="text-3xl sm:text-4xl font-extrabold hero-gradient animate-on-load">
+            AI BOT Trading Terminal
+        </h1>
+        <p class="text-gray-400 max-w-2xl mx-auto mt-2 animate-on-load" style="transition-delay: 100ms;">
+            Automated trading powered by CryptoWin algorithms. Monitor performance here.
+        </p>
+    </div>
+    
+    <section id="bot-status" class="mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <div class="glass rounded-xl p-6 border-2 flex flex-col items-center justify-center animate-on-load interactive-card" style="border-image: linear-gradient(90deg, #10B981, #06B6D4) 1;">
+                <h4 class="font-bold text-lg text-white mb-2">BOT STATUS</h4>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-2xl font-bold text-green-400">RUNNING</span>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Last Trade: 5 seconds ago</p>
+            </div>
+
+            <div class="glass rounded-xl p-6 border border-white/5 flex flex-col animate-on-load interactive-card" style="transition-delay: 100ms;">
+                <h4 class="font-bold text-lg text-white">Investment Capital</h4>
+                <p class="text-sm text-gray-400">5% Daily Profit Target</p>
+                <div class="my-3">
+                    <div class="text-xs text-gray-400">Total Invested Capital:</div>
+                    <div id="deposit-capital" class="text-2xl font-bold text-white my-1">₹2,000.00</div>
+                    <div class="text-xs text-gray-500 mt-1">Locked for 30 days.</div>
+                </div>
+            </div>
+            
+            <div class="glass rounded-xl p-6 border border-white/5 flex flex-col animate-on-load interactive-card" style="transition-delay: 200ms;">
+                <h4 class="font-bold text-lg text-white">Total BOT Profit</h4>
+                <p class="text-sm text-gray-400">Profit Accumulated</p>
+                <div class="my-3">
+                    <div class="text-xs text-gray-400">Total Profit Accumulated:</div>
+                    <div id="total-profit" class="text-2xl font-bold hero-gradient my-1">₹0.00</div>
+                    <div class="text-xs text-gray-500 mt-1">Calculated Daily.</div>
+                </div>
+            </div>
+            
+            <div class="glass rounded-xl p-6 border border-white/5 flex flex-col animate-on-load interactive-card" style="transition-delay: 300ms;">
+                <h4 class="font-bold text-lg text-white">Referral Bonus</h4>
+                <p class="text-sm text-gray-400">Instant Withdrawal Available</p>
+                <div class="my-3">
+                    <div class="text-xs text-gray-400">Withdrawable Balance:</div>
+                    <div id="referral-bonus" class="text-2xl font-bold text-green-400 my-1">₹0.00</div>
+                    <button id="withdraw-bonus-btn" class="w-full mt-2 py-2 rounded-lg font-semibold text-sm" style="background:linear-gradient(90deg,var(--neon-2),var(--neon-1));">Withdraw Bonus</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="withdrawal-status-section" class="mt-8 animate-on-load">
+        <div class="glass rounded-xl p-6 border border-white/5 grid grid-cols-1 md:grid-cols-3 items-center">
+            <div class="md:col-span-2">
+                <h4 class="font-bold text-xl text-white">Investment Withdrawal Cycle</h4>
+                <p class="text-sm text-gray-400 mt-1">Your capital is locked to ensure stable BOT trading. You can withdraw profits monthly.</p>
+            </div>
+            <div class="text-center md:text-right mt-4 md:mt-0">
+                <div class="text-xs text-gray-400">Next Withdrawal Available In:</div>
+                <div id="countdown-timer" class="text-2xl font-semibold text-white my-1">--d --h --m --s</div>
+                <button id="withdraw-profit-btn" class="py-2 px-6 rounded-lg font-semibold bg-gray-600/40 text-gray-400 cursor-not-allowed text-sm">Withdraw Profit</button>
+            </div>
+        </div>
+    </section>
+    
+    <section id="profit-chart" class="mt-8 animate-on-load" style="transition-delay: 400ms;">
+        <div class="glass rounded-xl p-6 border border-white/5">
+            <h4 class="font-bold text-lg text-white mb-4">30-Day BOT Performance</h4>
+            <div>
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section id="recent-activity" class="mt-8 animate-on-load" style="transition-delay: 500ms;">
+        <div class="glass rounded-xl p-6 border border-white/5">
+            <h4 class="font-bold text-lg text-white mb-4">Recent BOT Activity & Deposits</h4>
+            <ul class="space-y-3"></ul>
+        </div>
+    </section>
+
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <section id="top-winners" class="animate-on-load" style="transition-delay: 600ms;">
+            <div class="glass rounded-xl p-6 border border-white/5 h-full">
+                <h4 class="font-bold text-lg text-white mb-4">Top BOT Performers This Week</h4>
+                <ul class="space-y-4">
+                    <li class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-cyan-400 flex-shrink-0"></div>
+                        <div class="flex-grow">
+                            <p class="font-semibold text-white">Sneha Patel</p>
+                            <p class="text-xs text-gray-400">Platinum Pass Holder</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-green-400">₹5,250</p>
+                        </div>
+                    </li>
+                    <li class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-400 flex-shrink-0"></div>
+                        <div class="flex-grow">
+                            <p class="font-semibold text-white">Vikram Singh</p>
+                            <p class="text-xs text-gray-400">Gold Pass Holder</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-green-400">₹3,100</p>
+                        </div>
+                    </li>
+                    <li class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-green-400 flex-shrink-0"></div>
+                        <div class="flex-grow">
+                            <p class="font-semibold text-white">Anjali Sharma</p>
+                            <p class="text-xs text-gray-400">Silver Pass Holder</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-green-400">₹1,800</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="testimonials" class="animate-on-load" style="transition-delay: 700ms;">
+            <div class="glass rounded-xl p-6 border border-white/5 h-full">
+                <h4 class="font-bold text-lg text-white mb-4">What Our Users Say</h4>
+                <div class="space-y-4">
+                    <div class="p-4 rounded-lg bg-black/20">
+                        <p class="text-gray-300 text-sm italic">"Honestly, the daily profit system is very motivating. The UI is clean and everything is transparent."</p>
+                        <div class="text-right mt-2 font-semibold text-xs text-cyan-300">- Priya S.</div>
+                    </div>
+                    <div class="p-4 rounded-lg bg-black/20">
+                        <p class="text-gray-300 text-sm italic">"The referral bonus was credited instantly as promised. Great platform for passive income."</p>
+                        <div class="text-right mt-2 font-semibold text-xs text-cyan-300">- Arjun Verma</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+        <div id="footer-container"></div>
+    </div>
+
+    <div id="welcome-modal" class="hidden fixed inset-0 z-[100] p-4">
+        </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="./js/app-logic.js"></script>
+    <script src="./js/main.js"></script>
+
+<script>
+    // --- Dashboard Initialisation ---
+    document.addEventListener('DOMContentLoaded', () => {
+        initDashboardLogic();
+        handleWithdrawal();
+        renderProfitChart(); // Renders the 30-Day Line Chart
+        renderAssetAllocationChart(); // NEW: Renders the Pie/Donut Chart
+        updateMarketPulse(); // NEW: Updates the Live Market Snapshot Card
+
+        // Existing welcome modal logic (unchanged)
+        if (sessionStorage.getItem('welcomeModalShown') !== 'true') {
+            const welcomeModal = document.getElementById('welcome-modal');
+            const closeBtn = document.getElementById('close-welcome-modal');
+            const backdrop = document.getElementById('welcome-modal-backdrop');
+
+            if (welcomeModal && closeBtn && backdrop) {
+                const closeModal = () => {
+                    welcomeModal.classList.add('hidden');
+                    sessionStorage.setItem('welcomeModalShown', 'true');
+                };
+                setTimeout(() => { welcomeModal.classList.remove('hidden'); }, 800);
+                closeBtn.addEventListener('click', closeModal);
+                backdrop.addEventListener('click', closeModal);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && !welcomeModal.classList.contains('hidden')) { closeModal(); }
+                });
+            }
+        }
+        
+        // Update Market Pulse periodically (New Interval)
+        setInterval(updateMarketPulse, 5000); // Update every 5 seconds
+        
+        // Update Asset Allocation Chart periodically (New Interval)
+        setInterval(renderAssetAllocationChart, 60000); // Update every minute
+    });
+    
+    // --- NEW JAVASCRIPT FUNCTIONS (These should ideally be in app-logic.js) ---
+
+    // FAKE COIN DATA (Mirroring the market.html data)
+    const FAKE_BTC = { 
+        current_price: 5800000, 
+        price_change_percentage_24h: 2.14 
+    };
+    
+    // Function to dynamically update the Live Market Card
+    function updateMarketPulse() {
+        const priceEl = document.getElementById('live-btc-price');
+        const changeEl = document.getElementById('live-btc-change');
+        
+        // Simulate a small, continuous fluctuation based on the original fake data
+        const fluctuation = (Math.random() - 0.5) * 5000;
+        FAKE_BTC.current_price = Math.round(FAKE_BTC.current_price + fluctuation);
+        
+        const change = (Math.random() * 5) - 2.5; // Fluctuate 24h change a bit
+        const isBullish = change >= 0;
+        const changeClass = isBullish ? 'text-green-400' : 'text-red-400';
+
+        priceEl.textContent = `₹${FAKE_BTC.current_price.toLocaleString('en-IN')}`;
+        changeEl.textContent = `${change.toFixed(2)}%`;
+        changeEl.className = `text-lg font-semibold ${changeClass}`;
+    }
+
+    // Function to render the Asset Allocation Donut Chart
+    function renderAssetAllocationChart() {
+        const state = getState();
+        const ctx = document.getElementById('allocationChart').getContext('2d');
+        
+        // Calculate dynamic values
+        const totalBonus = state.referrals.reduce((sum, ref) => sum + (ref.status === 'Completed' ? ref.bonus : 0), 0);
+        
+        const depositDate = new Date(state.depositDate);
+        const daysPassed = (new Date() - depositDate) / (1000 * 60 * 60 * 24);
+        const accumulatedProfit = state.depositAmount * 0.05 * daysPassed;
+        const lockedInvestment = state.depositAmount + accumulatedProfit;
+        
+        const totalValue = lockedInvestment + totalBonus;
+        
+        const data = {
+            labels: ['Locked Investment', 'Referral Balance'],
+            datasets: [{
+                data: [lockedInvestment, totalBonus],
+                backgroundColor: ['#06B6D4', '#10B981'], // Cyan for Locked, Green for Referral
+                hoverBackgroundColor: ['#06B6D4', '#10B981'],
+                borderWidth: 0,
+            }]
+        };
+        
+        if (window.allocationChartInstance) {
+            window.allocationChartInstance.data.datasets[0].data = [lockedInvestment, totalBonus];
+            window.allocationChartInstance.update();
+            return;
+        }
+
+        window.allocationChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%', // Makes it a donut chart
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) { label += ': '; }
+                                label += '₹' + context.parsed.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

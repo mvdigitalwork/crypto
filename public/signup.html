@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sign Up — CryptoWin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script>
+        // Auth Guard: If logged in, redirect to dashboard
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = './dashboard.html';
+        }
+    </script>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4" style="background: linear-gradient(135deg, #1f2937, #0f172a);">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <a class="flex items-center justify-center gap-3" href="./dashboard.html">
+                <div class="w-10 h-10 rounded-xl" style="background:linear-gradient(135deg,var(--neon-1),var(--neon-2));"></div>
+                <div class="text-3xl font-extrabold tracking-tight text-white">N2<span class="hero-gradient">Crypto</span></div>
+            </a>
+        </div>
+        
+        <div class="glass rounded-xl p-6 sm:p-8 border border-white/5 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-white text-center">Create New Account</h2>
+            
+            <form id="signup-form" class="space-y-4">
+                <div>
+                    <label for="signup-username" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                    <input type="email" id="signup-username" name="username" class="w-full px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white focus:ring-cyan-500 focus:border-cyan-500" placeholder="your@email.com" required>
+                </div>
+                <div>
+                    <label for="signup-password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                    <input type="password" id="signup-password" name="password" class="w-full px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white focus:ring-cyan-500 focus:border-cyan-500" placeholder="••••••••" required>
+                </div>
+                
+                <input type="hidden" id="referrer-code" name="referrerCode">
+                
+                <button type="submit" id="signup-btn" class="w-full py-3 rounded-lg font-semibold text-white transition duration-200" style="background:linear-gradient(90deg,var(--neon-2),var(--neon-1));">
+                    Create Account
+                </button>
+            </form>
+            
+            <p class="mt-6 text-center text-sm text-gray-400">
+                Already have an account? 
+                <a href="./login.html" class="font-medium text-cyan-400 hover:text-cyan-300">Sign In</a>
+            </p>
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="./js/app-logic.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Read Referral Code from URL on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            const referrerCode = urlParams.get('ref');
+            
+            if (referrerCode) {
+                // If a code is found, populate the hidden input field
+                document.getElementById('referrer-code').value = referrerCode;
+                console.log('Referral code found and stored:', referrerCode);
+            }
+        });
+    </script>
+</body>
+</html>

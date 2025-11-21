@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Winners Pass — CryptoWin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/auth-guard.js" defer></script>
+</head>
+<body class="min-h-screen">
+    <div id="preloader"><div class="spinner"></div></div>
+    <div id="sidebar-container"></div>
+    <div class="lg:ml-64 transition-all duration-300 ease-in-out">
+        <div id="header-container"></div>
+<main class="p-6">
+    <section id="passes">
+        <div class="text-center mb-8">
+            <h3 class="text-3xl font-bold">Winners Passes</h3>
+            <p class="text-gray-400 max-w-2xl mx-auto mt-2">Pick a pass — each one increases your entries into the weekly draw and investment opportunities.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass rounded-xl p-6 flex flex-col">
+                <div class="flex items-center justify-between">
+                    <div><div class="text-sm text-gray-400">Bronze</div><div class="text-2xl font-bold mt-1">₹2,000</div></div>
+                    <div class="badge px-3 py-1 rounded-full text-xs">1 Entry</div>
+                </div>
+                <ul class="mt-4 text-gray-300 flex-1 space-y-2 text-sm"><li>1 weekly entry</li><li>Email newsletter</li></ul>
+                <button class="buy-btn mt-4 py-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition">Buy Bronze</button>
+            </div>
+            <div class="glass rounded-xl p-6 flex flex-col border-2 relative" style="border-image: linear-gradient(90deg,var(--neon-2),var(--neon-1)) 1;">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-400 text-black text-xs font-bold px-3 py-1 rounded-full">POPULAR</div>
+                <div class="flex items-center justify-between">
+                    <div><div class="text-sm text-gray-400">Silver</div><div class="text-2xl font-bold mt-1">₹4,000</div></div>
+                    <div class="badge px-3 py-1 rounded-full text-xs">3 Entries</div>
+                </div>
+                <ul class="mt-4 text-gray-300 flex-1 space-y-2 text-sm"><li>3 weekly entries</li><li>Priority support</li></ul>
+                <button class="buy-btn mt-4 py-3 rounded-lg" style="background:linear-gradient(90deg,var(--neon-2),var(--neon-1));">Buy Silver</button>
+            </div>
+            <div class="glass rounded-xl p-6 flex flex-col">
+                <div class="flex items-center justify-between">
+                    <div><div class="text-sm text-gray-400">Gold</div><div class="text-2xl font-bold mt-1">₹7,500</div></div>
+                    <div class="badge px-3 py-1 rounded-full text-xs">6 Entries</div>
+                </div>
+                <ul class="mt-4 text-gray-300 flex-1 space-y-2 text-sm"><li>6 weekly entries</li><li>Dedicated support</li><li>Early prize previews</li></ul>
+                <button class="buy-btn mt-4 py-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition">Buy Gold</button>
+            </div>
+            <div class="glass rounded-xl p-6 flex flex-col">
+                <div class="flex items-center justify-between">
+                    <div><div class="text-sm text-gray-400">Platinum</div><div class="text-2xl font-bold mt-1">₹12,000</div></div>
+                    <div class="badge px-3 py-1 rounded-full text-xs">12 Entries</div>
+                </div>
+                <ul class="mt-4 text-gray-300 flex-1 space-y-2 text-sm"><li>12 weekly entries</li><li>24/7 concierge</li><li>VIP prize pool</li></ul>
+                <button class="buy-btn mt-4 py-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition">Buy Platinum</button>
+            </div>
+        </div>
+    </section>
+</main>
+<div id="footer-container"></div>
+    </div>
+    <script src="./js/main.js"></script>
+    
+</body>
+</html>

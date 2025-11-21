@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Messages — CryptoWin</title>
+     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="./js/auth-guard.js" defer></script>
+</head>
+<body class="min-h-screen">
+    <div id="preloader"><div class="spinner"></div></div>
+    <div id="sidebar-container"></div>
+    <div class="lg:ml-64">
+        <div id="header-container"></div>
+        <main class="p-4 sm:p-6">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-8">Message Center</h2>
+            <div class="glass rounded-xl border border-white/5">
+                <ul class="divide-y divide-white/5">
+                    <li class="p-4 hover:bg-white/5 transition-colors duration-200">
+                        <p class="font-semibold text-white">✅ Withdrawal Successful</p>
+                        <p class="text-sm text-gray-400 mt-1">Your withdrawal of ₹400.00 has been successfully processed.</p>
+                        <p class="text-xs text-gray-500 mt-2">Nov 03, 2025</p>
+                    </li>
+                    <li class="p-4 hover:bg-white/5 transition-colors duration-200">
+                        <p class="font-semibold text-white">🎉 Welcome to CryptoWin!</p>
+                        <p class="text-sm text-gray-400 mt-1">Welcome! Your account is ready. Start by adding funds to your wallet.</p>
+                        <p class="text-xs text-gray-500 mt-2">Oct 07, 2025</p>
+                    </li>
+                </ul>
+            </div>
+        </main>
+        <div id="footer-container"></div>
+    </div>
+    <script src="./js/main.js"></script>
+    <script src="./js/app-logic.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</body>
+</html>

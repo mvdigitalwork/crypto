@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Account — CryptoWin</title>
+    
+    <meta name="description" content="Manage your account, view records, and see your assets.">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="./js/auth-guard.js" defer></script>
+</head>
+
+<body class="min-h-screen">
+    <div id="preloader"><div class="spinner"></div></div>
+    <div id="sidebar-container"></div>
+
+    <div class="lg:ml-64">
+        <div id="header-container"></div>
+        
+        <main class="p-4 sm:p-6">
+
+            <!-- User Info Section -->
+            <div class="flex items-center justify-between mb-6 animate-on-load">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full" style="background:linear-gradient(135deg,var(--neon-1),var(--neon-2));"></div>
+                    <div>
+                        <div class="text-sm font-bold text-white" id="user-email-display">loading...</div>
+                        <div class="text-xs text-gray-400">User ID: 7567082005</div>
+                    </div>
+                </div>
+                <button class="text-gray-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066
+                            c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426
+                            1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826
+                            3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924
+                            1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724
+                            1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724
+                            1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608
+                            2.296.096 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Assets Section -->
+            <div class="glass rounded-xl p-6 border border-white/5 animate-on-load" style="transition-delay: 100ms;">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-sm text-gray-400">Total Assets</label>
+                        <p class="text-xl font-bold text-white mt-1">₹<span id="total-assets">10213.79</span></p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400">Balance</label>
+                        <p class="text-xl font-bold text-white mt-1">₹10213.79</p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400">Time Deposit</label>
+                        <p class="text-xl font-bold text-white mt-1">₹<span id="time-deposit">2000.00</span></p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400">Estimated Income</label>
+                        <p class="text-xl font-bold text-cyan-300 mt-1">₹<span id="estimated-income">0.00</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Records Section -->
+            <div class="glass rounded-xl border border-white/5 mt-8 animate-on-load" style="transition-delay: 200ms;">
+                <ul class="divide-y divide-white/5">
+                    <li><a href="./recharge-record.html" class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors duration-200"><span>Recharge Record</span><span class="text-gray-400">&gt;</span></a></li>
+                    <li><a href="./withdraw-record.html" class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors duration-200"><span>Withdraw Record</span><span class="text-gray-400">&gt;</span></a></li>
+                    <li><a href="./my-orders.html" class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors duration-200"><span>My Orders</span><span class="text-gray-400">&gt;</span></a></li>
+                    <li><a href="./balance-change-log.html" class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors duration-200"><span>Balance Change Log</span><span class="text-gray-400">&gt;</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Other Options Section -->
+            <div class="glass rounded-xl border border-white/5 mt-8 animate-on-load" style="transition-delay: 300ms;">
+                <ul class="divide-y divide-white/5">
+                    <li><a href="./bank-card.html" class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors duration-200"><span>Bank Card</span><span class="text-gray-400">&gt;</span></a></li>
+                    <li><a href="./messages.html" class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors duration-200"><span>Messages</span><span class="text-gray-400">&gt;</span></a></li>
+                    <li><a href="./referrals.html" class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors duration-200"><span>Invite Friends</span><span class="text-gray-400">&gt;</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Logout Section -->
+            <div class="glass rounded-xl border border-red-500/20 mt-8 animate-on-load" style="transition-delay: 400ms;">
+                <button id="logout-btn" class="flex items-center justify-between p-4 w-full hover:bg-red-500/10 transition-colors duration-200">
+                    <span class="font-semibold text-red-400">Logout</span>
+                    <span class="text-red-400">&gt;</span>
+                </button>
+            </div>
+
+        </main>
+
+        <div id="footer-container"></div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="./js/main.js"></script>
+    <script src="./js/app-logic.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load user email from localStorage
+            const userEmail = localStorage.getItem('userEmail');
+            if (userEmail) {
+                document.getElementById('user-email-display').textContent = userEmail;
+            }
+
+            // Load profit data
+            const state = getState();
+            if (state) {
+                document.getElementById('time-deposit').textContent = state.depositAmount.toLocaleString('en-IN', {minimumFractionDigits: 2});
+
+                const depositDate = new Date(state.depositDate);
+                const now = new Date();
+                const timeDiff = now - depositDate;
+                const daysPassed = timeDiff / (1000 * 60 * 60 * 24);
+                const profit = state.depositAmount * 0.05 * daysPassed;
+
+                document.getElementById('estimated-income').textContent = profit.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                document.getElementById('total-assets').textContent = (state.depositAmount + profit).toLocaleString('en-IN', {minimumFractionDigits: 2});
+            }
+
+            // Logout Logic
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    Toastify({
+                        text: "Logging out...",
+                        duration: 1500,
+                        gravity: "bottom",
+                        position: "right",
+                        style: { background: "linear-gradient(to right, var(--neon-2), var(--neon-1))" }
+                    }).showToast();
+
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userEmail');
+
+                    setTimeout(() => {
+                        window.location.href = './login.html';
+                    }, 1500);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>Dashboard — CryptoWin</title>
+
+    <meta name="description" content="Track crypto, play weekly draws, and win big with CryptoWin. Your dashboard for daily profits and referral bonuses.">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-website.com/"> <meta property="og:title" content="CryptoWin — Track, Play & Win">
+    <meta property="og:description" content="Your dashboard for daily profits and referral bonuses.">
+    <meta property="og:image" content="https://your-website.com/social-preview.png"> <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://your-website.com/"> <meta property="twitter:title" content="CryptoWin — Track, Play & Win">
+    <meta property="twitter:description" content="Your dashboard for daily profits and referral bonuses.">
+    <meta property="twitter:image" content="https://your-website.com/social-preview.png"> <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+</head>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Money — CryptoWin</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Securely add money to your CryptoWin wallet using UPI, QR Code, and other payment methods.">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="./js/auth-guard.js" defer></script>
+</head>
+<body class="min-h-screen">
+    <div id="preloader"><div class="spinner"></div></div>
+    <div id="sidebar-container"></div>
+    <div class="lg:ml-64">
+        <div id="header-container"></div>
+        <main class="p-4 sm:p-6">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-2">Add Money to Your Wallet</h2>
+            <p class="text-gray-400 mb-8">Manual deposit requires UTR submission after payment.</p>
+
+            <form id="deposit-form" class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                
+                <div class="lg:col-span-3 glass rounded-xl p-6 border border-white/5 animate-on-load interactive-card">
+                    <h4 class="text-lg font-bold">1. Enter Amount</h4>
+                    <div class="relative mt-4">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-400">₹</span>
+                        <input id="amount-input" type="number" placeholder="2000" name="amount" value="2000" class="w-full bg-black/30 border border-white/10 rounded-lg p-4 pl-10 text-2xl font-bold neon-focus transition-all duration-300 focus:border-cyan-400" required>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹2,000</button>
+                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹5,000</button>
+                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹10,000</button>
+                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹15,000</button>
+                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹20,000</button>
+                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹25,000</button>
+                    </div>
+                    
+                    <h4 class="text-lg font-bold mt-8">3. Payment Details</h4>
+                    <div class="space-y-4 mt-4">
+                        <div>
+                            <label class="text-xs text-gray-400">Your Account Name (जिस खाते से भुगतान हुआ)</label>
+                            <input type="text" id="account-name-input" name="accountName" class="w-full mt-1 py-3 px-4 rounded-lg bg-black/30 border border-white/10 neon-focus" placeholder="e.g., Ramesh Kumar" required>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400">UTR / Transaction ID (12 Digit)</label>
+                            <input type="text" id="utr-input" name="utr" class="w-full mt-1 py-3 px-4 rounded-lg bg-black/30 border border-white/10 neon-focus" placeholder="e.g., 501234567890" required>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400">Payment Screenshot (Optional but recommended)</label>
+                            <input type="file" id="screenshot-input" name="screenshot" accept="image/*" class="w-full mt-1 py-3 px-4 rounded-lg bg-black/30 border border-white/10 neon-focus">
+                            <p class="text-xs text-gray-500 mt-1">Screenshot will be uploaded to our server.</p>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div id="qr-submission-section" class="lg:col-span-2 glass rounded-xl p-6 border-2 flex flex-col items-center justify-center text-center animate-on-load interactive-card" style="border-image: linear-gradient(90deg,var(--neon-2),var(--neon-1)) 1; transition-delay: 200ms;">
+                    <h4 class="text-xl font-bold">Step 2: Pay via UPI</h4>
+                    <p class="text-gray-400 text-sm mt-1">Amount to be paid:</p>
+                    <p id="qr-amount-display" class="font-extrabold text-white text-3xl my-2">₹2,000</p>
+                    
+                    <div class="w-40 h-40 sm:w-48 sm:h-48 bg-white p-2 rounded-lg mt-4 shadow-[0_0_25px_rgba(6,182,212,0.4)]">
+                        <img src="payment.jpeg" alt="Target UPI QR Code" class="w-full h-full object-contain">
+                    </div>
+                    
+                    <p class="text-sm text-gray-300 mt-4 px-4 font-semibold">
+                        SCAN and PAY the exact amount shown above.
+                    </p>
+                    
+                    <button type="submit" id="submit-deposit-btn" class="mt-6 w-full max-w-xs py-3 rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg hover:shadow-cyan-500/20" style="background:linear-gradient(90deg,var(--neon-2),var(--neon-1));">
+                        Submit UTR & Verification
+                    </button>
+                    <p class="text-xs text-gray-500 mt-3">
+                        Payment will be credited after manual verification (up to 30 mins).
+                    </p>
+                </div>
+
+            </form>
+        </main>
+        <div id="footer-container"></div>
+    </div>
+    
+    <script src="./js/main.js"></script>
+    <script src="./js/app-logic.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // --- CONFIGURATION ---
+        // NOTE: This URL should point to your Google Apps Script Web App deployed to handle DEPOSIT requests.
+        const DEPOSIT_API_URL = 'https://script.google.com/macros/s/AKfycbwdxjqmu35DUn9mFt_u_k_MdvF3_AVWp5ZxKBaLwWmUxpZDg2DVEwoNiR-Vb-w-b7i5/exec'; 
+        
+        // NEW: Function to convert file to Base64 (needed for Apps Script Drive upload)
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // --- UI Initialization and Amount Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('deposit-form');
+            const amountInput = document.getElementById('amount-input');
+            const qrAmountDisplay = document.getElementById('qr-amount-display');
+            const quickAddBtns = document.querySelectorAll('.quick-add-btn');
+
+            function updateAmount(amount) {
+                const cleanAmount = parseInt(amount) || 0;
+                amountInput.value = cleanAmount;
+                qrAmountDisplay.textContent = `₹${cleanAmount.toLocaleString('en-IN')}`;
+            }
+            
+            updateAmount(2000); // Initial amount
+
+            quickAddBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const amount = btn.textContent.replace('₹', '').replace(',', '');
+                    updateAmount(amount);
+                });
+            });
+
+            amountInput.addEventListener('input', () => {
+                updateAmount(amountInput.value);
+            });
+
+            // --- DEPOSIT SUBMISSION LOGIC (Updated to use async/await and Base64) ---
+            form.addEventListener('submit', async (e) => { // Added 'async'
+                e.preventDefault();
+                const amount = parseInt(amountInput.value);
+                const utr = document.getElementById('utr-input').value;
+                const accountName = document.getElementById('account-name-input').value;
+                const screenshotFile = document.getElementById('screenshot-input').files[0];
+                const submitBtn = document.getElementById('submit-deposit-btn');
+
+                if (!amount || amount < 100) {
+                    Toastify({ text: "❌ Please enter a valid amount (min ₹100).", duration: 3000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
+                    return;
+                }
+                if (utr.length < 12 || accountName.length < 3) {
+                    Toastify({ text: "❌ Please enter valid UTR/Account Name.", duration: 3000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
+                    return;
+                }
+                
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `Processing...`;
+
+                // --- 1. Base64 Conversion for Screenshot ---
+                let screenshotBase64 = null;
+                if (screenshotFile) {
+                    try {
+                        // File to Base64 conversion
+                        screenshotBase64 = await toBase64(screenshotFile); 
+                    } catch (error) {
+                        Toastify({ text: "❌ Screenshot file conversion failed. Try without file.", duration: 4000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit UTR & Verification';
+                        return;
+                    }
+                }
+                
+                // --- 2. Prepare Data for Google Sheet ---
+                const dataToSend = {
+                    action: 'submit_deposit',
+                    // Use 'currentUser' to get the logged-in user's email
+                    userEmail: localStorage.getItem('currentUser') || 'unknown@user.com', 
+                    depositAmount: amount,
+                    utr: utr,
+                    accountName: accountName,
+                    screenshotBase64: screenshotBase64 // Send Base64 string to Apps Script
+                };
+                
+                // --- 3. Send Data to Google Apps Script (Your Backend) ---
+                fetch(DEPOSIT_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataToSend)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        Toastify({ text: `✅ Deposit Request Submitted! Verification is pending.`, duration: 5000, gravity: "bottom", position: "right", style: { background: "linear-gradient(to right, #FFA500, #FFD700)"} }).showToast();
+                        
+                        submitBtn.textContent = 'Submitted, Waiting for Credit';
+                        
+                    } else {
+                        Toastify({ text: `❌ Submission failed: ${result.message}`, duration: 5000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit UTR & Verification';
+                    }
+                })
+                .catch(error => {
+                    Toastify({ text: `❌ Network error: Could not reach server.`, duration: 5000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit UTR & Verification';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Market — CryptoWin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/dayjs.min.js"></script>
+    <script src="./js/auth-guard.js" defer></script>
+
+    <style>
+        #chart-container {
+            height: 400px;
+            max-height: 80vh;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <div id="preloader"><div class="spinner"></div></div>
+    <div id="sidebar-container"></div>
+    <div class="lg:ml-64 transition-all duration-300 ease-in-out">
+        <div id="header-container"></div>
+        <main class="p-6">
+            <section id="market-chart" class="mb-8">
+                <div class="glass rounded-xl p-4 sm:p-6 border border-white/6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    <div class="lg:col-span-2">
+                        <div class="flex items-center gap-3 mb-4">
+                            <img id="chart-coin-image" src="" class="w-8 h-8 rounded-full" alt="Coin Logo">
+                            <div>
+                                <h3 id="chart-coin-pair" class="text-2xl font-bold text-white">BTC/INR</h3>
+                                <p id="chart-coin-name" class="text-sm text-gray-400">Bitcoin</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-end gap-3 mb-4">
+                            <div id="current-price" class="text-4xl font-extrabold text-green-400">₹5,800,000</div>
+                            <div id="price-change-24h" class="text-lg font-semibold text-green-400">+2.14%</div>
+                        </div>
+
+                        <div id="chart-container" class="w-full">
+                            <canvas id="coinChart"></canvas>
+                        </div>
+
+                        <div class="flex gap-2 mt-4 text-sm">
+                            <button class="time-tab bg-white/10 px-3 py-1 rounded-lg text-white font-semibold">1H</button>
+                            <button class="time-tab bg-black/30 px-3 py-1 rounded-lg text-gray-400 hover:bg-white/5">1D</button>
+                            <button class="time-tab bg-black/30 px-3 py-1 rounded-lg text-gray-400 hover:bg-white/5">1W</button>
+                            <button class="time-tab bg-black/30 px-3 py-1 rounded-lg text-gray-400 hover:bg-white/5">1M</button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1 glass rounded-lg p-4 border border-white/10 flex flex-col justify-center">
+                        <h4 class="text-xl font-bold mb-4 text-center">Place Order</h4>
+                        <button id="buy-btn" class="w-full py-3 mb-4 rounded-lg font-bold text-white transition-transform hover:scale-105" style="background-color: #10B981;">
+                            BUY <span id="buy-symbol">BTC</span>
+                        </button>
+                        <button id="sell-btn" class="w-full py-3 rounded-lg font-bold text-white transition-transform hover:scale-105" style="background-color: #EF4444;">
+                            SELL <span id="sell-symbol">BTC</span>
+                        </button>
+                        <p class="text-xs text-gray-500 mt-4 text-center">Clicking Buy/Sell will open the full trade form.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="market-table">
+                <div class="glass rounded-xl overflow-hidden border border-white/6">
+                    <div
+                        class="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-white/6 gap-3">
+                        <div>
+                            <h3 class="text-xl font-bold">Top 10 Coins</h3>
+                            <p class="text-sm text-gray-400 mt-1">Select a coin to view its full chart.</p>
+                        </div>
+                        <div class="text-sm text-gray-400 self-end sm:self-center">Last updated: <span
+                                id="market-updated">—</span></div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[780px]">
+                            <thead class="text-xs text-gray-400 uppercase tracking-wide">
+                                <tr class="border-b border-white/6">
+                                    <th class="p-4 text-left">#</th>
+                                    <th class="p-4 text-left">Coin</th>
+                                    <th class="p-4 text-right">Price (INR)</th>
+                                    <th class="p-4 text-right">24h %</th>
+                                    <th class="p-4 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crypto-table-body" class="text-sm">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div id="footer-container"></div>
+    </div>
+    <script src="./js/main.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // --- FAKE DATA AND CHART LOGIC ---
+
+        const FAKE_COINS = [
+            { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC', current_price: 5800000, price_change_percentage_24h: 2.14, market_cap: 110e12, total_volume: 2.5e12, image: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png' },
+            { id: 'ethereum', name: 'Ethereum', symbol: 'ETH', current_price: 350000, price_change_percentage_24h: -1.65, market_cap: 42e12, total_volume: 1.8e12, image: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png' },
+            { id: 'tether', name: 'Tether', symbol: 'USDT', current_price: 83.50, price_change_percentage_24h: 0.01, market_cap: 8e12, total_volume: 4e12, image: 'https://assets.coingecko.com/coins/images/325/large/Tether-logo.png' },
+            { id: 'bnb', name: 'BNB', symbol: 'BNB', current_price: 48000, price_change_percentage_24h: 0.85, market_cap: 7.5e12, total_volume: 0.8e12, image: 'https://assets.coingecko.com/coins/images/825/large/binance-coin-logo.png' },
+            { id: 'solana', name: 'Solana', symbol: 'SOL', current_price: 11500, price_change_percentage_24h: 5.32, market_cap: 5.2e12, total_volume: 1.1e12, image: 'https://assets.coingecko.com/coins/images/4128/large/solana.png' },
+            { id: 'xrp', name: 'XRP', current_price: 52.70, price_change_percentage_24h: -2.11, market_cap: 2.8e12, total_volume: 0.5e12, image: 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png' },
+            { id: 'cardano', name: 'Cardano', symbol: 'ADA', current_price: 38.50, price_change_percentage_24h: 1.19, market_cap: 1.3e12, total_volume: 0.3e12, image: 'https://assets.coingecko.com/coins/images/975/large/cardano.png' },
+            { id: 'dogecoin', name: 'Dogecoin', symbol: 'DOGE', current_price: 13.20, price_change_percentage_24h: 8.99, market_cap: 1.9e12, total_volume: 0.9e12, image: 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png' },
+            { id: 'shiba-inu', name: 'Shiba Inu', symbol: 'SHIB', current_price: 0.0023, price_change_percentage_24h: -0.55, market_cap: 1.4e12, total_volume: 0.4e12, image: 'https://assets.coingecko.com/coins/images/11939/large/shiba.png' },
+            { id: 'polygon', name: 'Polygon', symbol: 'MATIC', current_price: 65.10, price_change_percentage_24h: 3.45, market_cap: 0.6e12, total_volume: 0.2e12, image: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png' }
+        ];
+
+        let currentCoinId = 'bitcoin';
+        let coinChartInstance;
+
+        // Function to generate pseudo-real time chart data for any coin
+        function generateChartData(coin, historyLength = 24) {
+            const data = {
+                labels: [],
+                prices: []
+            };
+            const volatility = coin.current_price / 1000; // More volatile for high price coins
+            let currentPrice = coin.current_price - (volatility * 10); // Start slightly lower
+
+            for (let i = 0; i < historyLength; i++) {
+                // Simulate price change (Bar chart style for pseudo-candlestick effect)
+                currentPrice += (Math.random() - 0.5) * volatility * 2;
+                data.labels.push(dayjs().subtract(historyLength - i, 'hour').format('HH:00'));
+                data.prices.push(currentPrice);
+            }
+            return data;
+        }
+
+        function renderCoinChart(coin) {
+            const ctx = document.getElementById('coinChart').getContext('2d');
+            const data = generateChartData(coin);
+
+            // Update Ticker Info
+            const change = coin.price_change_percentage_24h;
+            const isBullish = change >= 0;
+            const changeClass = isBullish ? 'text-green-400' : 'text-red-400';
+            const priceText = `₹${coin.current_price.toLocaleString('en-IN')}`;
+
+            document.getElementById('chart-coin-image').src = coin.image;
+            document.getElementById('chart-coin-pair').textContent = `${coin.symbol}/INR`;
+            document.getElementById('chart-coin-name').textContent = coin.name;
+            document.getElementById('current-price').textContent = priceText;
+            document.getElementById('current-price').className = `text-4xl font-extrabold ${changeClass}`;
+            document.getElementById('price-change-24h').textContent = `${change.toFixed(2)}%`;
+            document.getElementById('price-change-24h').className = `text-lg font-semibold ${changeClass}`;
+            document.getElementById('buy-symbol').textContent = coin.symbol;
+            document.getElementById('sell-symbol').textContent = coin.symbol;
+
+
+            const barColors = data.prices.map((price, index) => {
+                if (index === 0) return 'rgba(16, 185, 129, 0.8)'; // Green (neutral start)
+                return price > data.prices[index - 1] ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)'; // Green or Red
+            });
+
+            if (coinChartInstance) {
+                coinChartInstance.destroy(); // Destroy previous instance
+            }
+
+            coinChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: `${coin.symbol} Price`,
+                        data: data.prices,
+                        backgroundColor: barColors,
+                        borderColor: barColors,
+                        borderWidth: 1,
+                        barPercentage: 0.8,
+                        categoryPercentage: 0.9
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255, 255, 255, 0.5)', maxRotation: 0, minRotation: 0 }
+                        },
+                        y: {
+                            ticks: { color: 'rgba(255, 255, 255, 0.5)', callback: function (value) { return '₹' + value.toLocaleString('en-IN', { maximumFractionDigits: coin.symbol === 'SHIB' ? 4 : 0 }); } },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Simulates real-time price fluctuation for all coins
+        function updateLivePrices() {
+            FAKE_COINS.forEach(coin => {
+                const volatility = coin.current_price / 1000;
+                const fluctuation = (Math.random() - 0.5) * volatility * 0.5; // Small, continuous fluctuation
+                coin.current_price += fluctuation;
+                
+                // For low-priced coins, round to fewer decimals
+                if (coin.current_price < 1) {
+                    coin.current_price = parseFloat(coin.current_price.toFixed(4));
+                } else if (coin.current_price < 100) {
+                    coin.current_price = parseFloat(coin.current_price.toFixed(2));
+                } else {
+                    coin.current_price = Math.round(coin.current_price);
+                }
+            });
+
+            // Update the chart if the current coin is being viewed
+            const currentCoin = FAKE_COINS.find(c => c.id === currentCoinId);
+            if (currentCoin) {
+                 // Re-render chart using the updated price
+                 renderCoinChart(currentCoin);
+            }
+
+            // Update the main table
+            renderMarket(FAKE_COINS);
+
+            // Update 'Last updated' time
+            document.getElementById('market-updated').textContent = dayjs().format('HH:mm:ss');
+        }
+
+        // --- MARKET TABLE RENDERING ---
+        
+        // Click handler for the 'View Chart' buttons in the table
+        function handleChartClick(symbol) {
+            const coin = FAKE_COINS.find(c => c.symbol === symbol);
+            if (coin) {
+                currentCoinId = coin.id;
+                renderCoinChart(coin);
+                // Scroll to chart view on mobile
+                document.getElementById('market-chart').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function renderMarket(coins) {
+            const tableBody = document.getElementById('crypto-table-body');
+            if (!tableBody) return;
+            tableBody.innerHTML = '';
+            
+            // Render table data
+            coins.forEach((coin, idx) => {
+                const change = coin.price_change_percentage_24h;
+                const changeClass = change >= 0 ? 'text-green-400' : 'text-red-400';
+                const formattedPrice = coin.current_price.toLocaleString('en-IN', { maximumFractionDigits: coin.symbol === 'SHIB' ? 4 : 0 });
+
+                const row = document.createElement('tr');
+                row.className = 'table-row border-b border-white/6 cursor-pointer hover:bg-white/5 transition-colors';
+                row.onclick = () => handleChartClick(coin.symbol); // Attach click handler
+                
+                row.innerHTML = `
+                    <td class="p-4 text-gray-300 font-medium">${idx + 1}</td>
+                    <td class="p-4 flex items-center gap-3">
+                        <img src="${coin.image}" class="w-8 h-8 rounded-full">
+                        <div>
+                            <div class="font-semibold text-white">${coin.name}</div>
+                            <div class="text-xs text-gray-400 uppercase">${coin.symbol}</div>
+                        </div>
+                    </td>
+                    <td class="p-4 text-right font-semibold">₹${formattedPrice}</td>
+                    <td class="p-4 text-right font-semibold ${changeClass}">${change.toFixed(2)}%</td>
+                    <td class="p-4 text-right">
+                        <button onclick="event.stopPropagation(); handleChartClick('${coin.symbol}')" class="bg-cyan-500/20 text-cyan-300 text-xs px-3 py-1 rounded-full hover:bg-cyan-500/40 transition">
+                            View Chart
+                        </button>
+                    </td>`;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function showSkeleton() {
+            const tableBody = document.getElementById('crypto-table-body');
+            if (!tableBody) return;
+            let html = '';
+            for (let i = 0; i < 10; i++) {
+                html += `<tr class="table-row border-b border-white/6"><td class="p-4"><div class="skeleton h-4 w-6"></div></td><td class="p-4"><div class="flex items-center gap-3"><div class="skeleton h-8 w-8 rounded-full"></div><div><div class="skeleton h-3 w-28 mb-2"></div><div class="skeleton h-3 w-12"></div></div></div></td><td class="p-4 text-right"><div class="skeleton h-4 w-20 ml-auto"></div></td><td class="p-4 text-right"><div class="skeleton h-4 w-12 ml-auto"></div></td><td class="p-4 text-right"><div class="skeleton h-4 w-28 ml-auto"></div></td><td class="p-4 text-right"><div class="skeleton h-4 w-28 ml-auto"></div></td></tr>`;
+            }
+            tableBody.innerHTML = html;
+        }
+
+        function fetchMarket() {
+            showSkeleton();
+            // Initial render after a short delay
+            setTimeout(() => {
+                renderMarket(FAKE_COINS);
+                const initialCoin = FAKE_COINS.find(c => c.id === 'bitcoin');
+                if (initialCoin) {
+                    renderCoinChart(initialCoin);
+                }
+            }, 1000);
+        }
+        
+        // --- INITIALIZATION AND EVENT LISTENERS ---
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchMarket();
+
+            // Simulate live price updates every 3 seconds
+            setInterval(updateLivePrices, 3000); 
+
+            // Buy/Sell Button Logic (Demo)
+            document.getElementById('buy-btn').addEventListener('click', () => {
+                Toastify({ text: `Demo: Buy ${document.getElementById('buy-symbol').textContent} form would open here!`, duration: 3000, gravity: "bottom", position: "right", style: { background: "#10B981"} }).showToast();
+            });
+            document.getElementById('sell-btn').addEventListener('click', () => {
+                Toastify({ text: `Demo: Sell ${document.getElementById('sell-symbol').textContent} form would open here!`, duration: 3000, gravity: "bottom", position: "right", style: { background: "#EF4444"} }).showToast();
+            });
+        });
+    </script>
+</body>
+
+</html>
