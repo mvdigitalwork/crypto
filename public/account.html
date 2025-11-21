@@ -24,13 +24,12 @@
         
         <main class="p-4 sm:p-6">
 
-            <!-- User Info Section -->
             <div class="flex items-center justify-between mb-6 animate-on-load">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full" style="background:linear-gradient(135deg,var(--neon-1),var(--neon-2));"></div>
                     <div>
-                        <div class="text-sm font-bold text-white" id="user-email-display">loading...</div>
-                        <div class="text-xs text-gray-400">User ID: 7567082005</div>
+                        <div class="text-sm font-bold text-white" id="user-display-identifier">loading...</div>
+                        <div class="text-xs text-gray-400">User Status: Active</div>
                     </div>
                 </div>
                 <button class="text-gray-400 hover:text-white">
@@ -50,29 +49,27 @@
                 </button>
             </div>
 
-            <!-- Assets Section -->
             <div class="glass rounded-xl p-6 border border-white/5 animate-on-load" style="transition-delay: 100ms;">
                 <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <label class="text-sm text-gray-400">Total Assets</label>
-                        <p class="text-xl font-bold text-white mt-1">₹<span id="total-assets">10213.79</span></p>
+                        <label class="text-sm text-gray-400">Total Assets Value</label>
+                        <p class="text-xl font-bold text-white mt-1">₹<span id="total-assets">Fetching...</span></p>
                     </div>
                     <div>
-                        <label class="text-sm text-gray-400">Balance</label>
-                        <p class="text-xl font-bold text-white mt-1">₹10213.79</p>
+                        <label class="text-sm text-gray-400">Withdrawable Balance</label>
+                        <p class="text-xl font-bold text-white mt-1">₹<span id="wallet-balance-display">Fetching...</span></p>
                     </div>
                     <div>
-                        <label class="text-sm text-gray-400">Time Deposit</label>
-                        <p class="text-xl font-bold text-white mt-1">₹<span id="time-deposit">2000.00</span></p>
+                        <label class="text-sm text-gray-400">Locked Deposit</label>
+                        <p class="text-xl font-bold text-white mt-1">₹<span id="time-deposit">Fetching...</span></p>
                     </div>
                     <div>
-                        <label class="text-sm text-gray-400">Estimated Income</label>
-                        <p class="text-xl font-bold text-cyan-300 mt-1">₹<span id="estimated-income">0.00</span></p>
+                        <label class="text-sm text-gray-400">Estimated Profit</label>
+                        <p class="text-xl font-bold text-cyan-300 mt-1">₹<span id="estimated-income">Fetching...</span></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Records Section -->
             <div class="glass rounded-xl border border-white/5 mt-8 animate-on-load" style="transition-delay: 200ms;">
                 <ul class="divide-y divide-white/5">
                     <li><a href="./recharge-record.html" class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors duration-200"><span>Recharge Record</span><span class="text-gray-400">&gt;</span></a></li>
@@ -82,7 +79,6 @@
                 </ul>
             </div>
 
-            <!-- Other Options Section -->
             <div class="glass rounded-xl border border-white/5 mt-8 animate-on-load" style="transition-delay: 300ms;">
                 <ul class="divide-y divide-white/5">
                     <li><a href="./bank-card.html" class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors duration-200"><span>Bank Card</span><span class="text-gray-400">&gt;</span></a></li>
@@ -91,7 +87,6 @@
                 </ul>
             </div>
 
-            <!-- Logout Section -->
             <div class="glass rounded-xl border border-red-500/20 mt-8 animate-on-load" style="transition-delay: 400ms;">
                 <button id="logout-btn" class="flex items-center justify-between p-4 w-full hover:bg-red-500/10 transition-colors duration-200">
                     <span class="font-semibold text-red-400">Logout</span>
@@ -104,35 +99,60 @@
         <div id="footer-container"></div>
     </div>
     
-    <!-- Scripts -->
     <script src="./js/main.js"></script>
     <script src="./js/app-logic.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load user email from localStorage
-            const userEmail = localStorage.getItem('userEmail');
-            if (userEmail) {
-                document.getElementById('user-email-display').textContent = userEmail;
+        // NOTE: This logic assumes fetchUserWalletBalance and getState are defined in js/app-logic.js
+
+        async function loadAccountData() {
+            // --- 1. Get User Identifier ---
+            const username = localStorage.getItem('currentUser'); 
+            // We use 'currentUser' as the primary identifier if 'currentUserEmail' is not set
+            const userIdentifier = localStorage.getItem('currentUserEmail') || username; 
+            
+            // Display User Identifier
+            if (username) {
+                document.getElementById('user-display-identifier').textContent = username;
+            } else {
+                 document.getElementById('user-display-identifier').textContent = 'Guest User';
             }
 
-            // Load profit data
+            // --- 2. Fetch REAL Wallet Balance from Google Sheet ---
+            const realWalletBalance = await fetchUserWalletBalance(userIdentifier); 
+            
+            // --- 3. Update Local State Data (Deposit/Profit Calculation) ---
             const state = getState();
-            if (state) {
-                document.getElementById('time-deposit').textContent = state.depositAmount.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            
+            // Calculate Profit locally based on the fixed 5% daily rate applied to the initial deposit
+            const initialDeposit = state.depositAmount || 0;
+            const depositDate = new Date(state.depositDate);
+            const now = new Date();
+            const timeDiff = now - depositDate;
+            const daysPassed = timeDiff / (1000 * 60 * 60 * 24);
+            const profit = initialDeposit * 0.05 * daysPassed;
+            
+            // Calculate Total Assets (Sheet Balance + Initial Deposit + Estimated Profit)
+            const totalAssetsValue = realWalletBalance + initialDeposit + profit;
 
-                const depositDate = new Date(state.depositDate);
-                const now = new Date();
-                const timeDiff = now - depositDate;
-                const daysPassed = timeDiff / (1000 * 60 * 60 * 24);
-                const profit = state.depositAmount * 0.05 * daysPassed;
+            // --- 4. Update UI Elements ---
+            
+            // Update Actual Balance (From Google Sheet)
+            document.getElementById('wallet-balance-display').textContent = realWalletBalance.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            
+            // Update Time Deposit (From Local State)
+            document.getElementById('time-deposit').textContent = initialDeposit.toLocaleString('en-IN', {minimumFractionDigits: 2});
 
-                document.getElementById('estimated-income').textContent = profit.toLocaleString('en-IN', {minimumFractionDigits: 2});
-                document.getElementById('total-assets').textContent = (state.depositAmount + profit).toLocaleString('en-IN', {minimumFractionDigits: 2});
-            }
+            // Update Estimated Income (From Local State)
+            document.getElementById('estimated-income').textContent = profit.toLocaleString('en-IN', {minimumFractionDigits: 2});
 
-            // Logout Logic
+            // Update Total Assets
+            document.getElementById('total-assets').textContent = totalAssetsValue.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        }
+
+        // --- Logout Logic ---
+        function setupLogout() {
             const logoutBtn = document.getElementById('logout-btn');
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', () => {
@@ -141,17 +161,23 @@
                         duration: 1500,
                         gravity: "bottom",
                         position: "right",
-                        style: { background: "linear-gradient(to right, var(--neon-2), var(--neon-1))" }
+                        style: { background: "linear-gradient(to right, #FF416C, #FF4B2B)" }
                     }).showToast();
 
                     localStorage.removeItem('isLoggedIn');
-                    localStorage.removeItem('userEmail');
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('currentUserEmail'); 
 
                     setTimeout(() => {
                         window.location.href = './login.html';
                     }, 1500);
                 });
             }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAccountData();
+            setupLogout();
         });
     </script>
 </body>

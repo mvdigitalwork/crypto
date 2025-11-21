@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="./js/auth-guard.js" defer></script>
 </head>
 <body class="min-h-screen">
@@ -19,66 +20,55 @@
         <div id="header-container"></div>
         <main class="p-4 sm:p-6">
             <h2 class="text-2xl sm:text-3xl font-bold mb-2">Add Money to Your Wallet</h2>
-            <p class="text-gray-400 mb-8">Manual deposit requires UTR submission after payment.</p>
+            <p class="text-gray-400 mb-8">Your transactions are secure and encrypted.</p>
 
-            <form id="deposit-form" class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 
                 <div class="lg:col-span-3 glass rounded-xl p-6 border border-white/5 animate-on-load interactive-card">
                     <h4 class="text-lg font-bold">1. Enter Amount</h4>
                     <div class="relative mt-4">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-400">₹</span>
-                        <input id="amount-input" type="number" placeholder="2000" name="amount" value="2000" class="w-full bg-black/30 border border-white/10 rounded-lg p-4 pl-10 text-2xl font-bold neon-focus transition-all duration-300 focus:border-cyan-400" required>
+                        <input id="amount-input" type="number" placeholder="2000" class="w-full bg-black/30 border border-white/10 rounded-lg p-4 pl-10 text-2xl font-bold neon-focus transition-all duration-300 focus:border-cyan-400">
                     </div>
                     <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹2,000</button>
-                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹5,000</button>
-                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹10,000</button>
-                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹15,000</button>
-                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹20,000</button>
-                        <button type="button" class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹25,000</button>
+                        <button class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹2,000</button>
+                        <button class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹5,000</button>
+                        <button class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹10,000</button>
+                        <button class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹15,000</button>
+                        <button class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹20,000</button>
+                        <button class="quick-add-btn p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-transform hover:scale-105">₹25,000</button>
                     </div>
-                    
-                    <h4 class="text-lg font-bold mt-8">3. Payment Details</h4>
-                    <div class="space-y-4 mt-4">
-                        <div>
-                            <label class="text-xs text-gray-400">Your Account Name (जिस खाते से भुगतान हुआ)</label>
-                            <input type="text" id="account-name-input" name="accountName" class="w-full mt-1 py-3 px-4 rounded-lg bg-black/30 border border-white/10 neon-focus" placeholder="e.g., Ramesh Kumar" required>
+
+                    <h4 class="text-lg font-bold mt-8">2. Select Payment Method</h4>
+                    <div class="mt-4 border border-white/10 rounded-lg p-2 space-y-2">
+                        <div class="p-4 rounded-md bg-white/5 cursor-pointer border border-cyan-400/50">
+                            <h5 class="font-semibold">UPI / QR Code</h5>
+                            <p class="text-xs text-gray-400">Pay using any UPI app (PhonePe, GPay, etc.)</p>
                         </div>
-                        <div>
-                            <label class="text-xs text-gray-400">UTR / Transaction ID (12 Digit)</label>
-                            <input type="text" id="utr-input" name="utr" class="w-full mt-1 py-3 px-4 rounded-lg bg-black/30 border border-white/10 neon-focus" placeholder="e.g., 501234567890" required>
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-400">Payment Screenshot (Optional but recommended)</label>
-                            <input type="file" id="screenshot-input" name="screenshot" accept="image/*" class="w-full mt-1 py-3 px-4 rounded-lg bg-black/30 border border-white/10 neon-focus">
-                            <p class="text-xs text-gray-500 mt-1">Screenshot will be uploaded to our server.</p>
+                        <div class="p-4 rounded-md opacity-40 cursor-not-allowed">
+                            <h5 class="font-semibold">Credit/Debit Card</h5>
+                            <p class="text-xs text-gray-400">Temporarily unavailable for this transaction.</p>
                         </div>
                     </div>
-                    
                 </div>
 
-                <div id="qr-submission-section" class="lg:col-span-2 glass rounded-xl p-6 border-2 flex flex-col items-center justify-center text-center animate-on-load interactive-card" style="border-image: linear-gradient(90deg,var(--neon-2),var(--neon-1)) 1; transition-delay: 200ms;">
-                    <h4 class="text-xl font-bold">Step 2: Pay via UPI</h4>
+                <div id="qr-code-section" class="lg:col-span-2 glass rounded-xl p-6 border-2 flex flex-col items-center justify-center text-center animate-on-load interactive-card" style="border-image: linear-gradient(90deg,var(--neon-2),var(--neon-1)) 1; transition-delay: 200ms;">
+                    <h4 class="text-xl font-bold">Scan to Pay</h4>
                     <p class="text-gray-400 text-sm mt-1">Amount to be paid:</p>
-                    <p id="qr-amount-display" class="font-extrabold text-white text-3xl my-2">₹2,000</p>
+                    <p id="qr-amount" class="font-extrabold text-white text-3xl my-2">₹2,000</p>
                     
                     <div class="w-40 h-40 sm:w-48 sm:h-48 bg-white p-2 rounded-lg mt-4 shadow-[0_0_25px_rgba(6,182,212,0.4)]">
-                        <img src="payment.jpeg" alt="Target UPI QR Code" class="w-full h-full object-contain">
+                        <img src="payment.jpeg" alt="Fake UPI QR Code" class="w-full h-full object-contain">
                     </div>
                     
-                    <p class="text-sm text-gray-300 mt-4 px-4 font-semibold">
-                        SCAN and PAY the exact amount shown above.
-                    </p>
+                    <p class="text-xs text-gray-500 mt-4 px-4">This is a demo QR code for UI purposes only. Do not send any money.</p>
                     
-                    <button type="submit" id="submit-deposit-btn" class="mt-6 w-full max-w-xs py-3 rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg hover:shadow-cyan-500/20" style="background:linear-gradient(90deg,var(--neon-2),var(--neon-1));">
-                        Submit UTR & Verification
+                    <button id="confirm-payment-btn" class="mt-6 w-full max-w-xs py-3 rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg hover:shadow-cyan-500/20" style="background:linear-gradient(90deg,var(--neon-2),var(--neon-1));">
+                        I have paid, Confirm
                     </button>
-                    <p class="text-xs text-gray-500 mt-3">
-                        Payment will be credited after manual verification (up to 30 mins).
-                    </p>
                 </div>
 
-            </form>
+            </div>
         </main>
         <div id="footer-container"></div>
     </div>
@@ -86,35 +76,31 @@
     <script src="./js/main.js"></script>
     <script src="./js/app-logic.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script>
-        // --- CONFIGURATION ---
-        // NOTE: This URL should point to your Google Apps Script Web App deployed to handle DEPOSIT requests.
-        const DEPOSIT_API_URL = 'https://script.google.com/macros/s/AKfycbwdxjqmu35DUn9mFt_u_k_MdvF3_AVWp5ZxKBaLwWmUxpZDg2DVEwoNiR-Vb-w-b7i5/exec'; 
-        
-        // NEW: Function to convert file to Base64 (needed for Apps Script Drive upload)
-        function toBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
 
-        // --- UI Initialization and Amount Logic ---
+    <script>
+        // NOTE: This uses the WEB_APP_URL, getState, and saveState functions defined in js/app-logic.js
+        
         document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('deposit-form');
             const amountInput = document.getElementById('amount-input');
-            const qrAmountDisplay = document.getElementById('qr-amount-display');
+            const qrAmount = document.getElementById('qr-amount');
             const quickAddBtns = document.querySelectorAll('.quick-add-btn');
+            const confirmPaymentBtn = document.getElementById('confirm-payment-btn');
+            
+            // Get user identifier (using 'currentUser' as fallback if email key is not consistent)
+            const userIdentifier = localStorage.getItem('currentUserIdentifier') || localStorage.getItem('currentUser'); 
+            
+            if (!userIdentifier) {
+                Toastify({ text: "❌ Error: User not logged in or identifier missing.", duration: 5000, gravity: "top", position: "center", style: { background: "red"} }).showToast();
+                confirmPaymentBtn.disabled = true;
+                return;
+            }
 
             function updateAmount(amount) {
-                const cleanAmount = parseInt(amount) || 0;
-                amountInput.value = cleanAmount;
-                qrAmountDisplay.textContent = `₹${cleanAmount.toLocaleString('en-IN')}`;
+                amountInput.value = amount;
+                qrAmount.textContent = `₹${parseInt(amount).toLocaleString('en-IN')}`;
             }
             
-            updateAmount(2000); // Initial amount
+            updateAmount(2000);
 
             quickAddBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -124,80 +110,63 @@
             });
 
             amountInput.addEventListener('input', () => {
-                updateAmount(amountInput.value);
+                const amount = amountInput.value || 0;
+                qrAmount.textContent = `₹${parseInt(amount).toLocaleString('en-IN')}`;
             });
 
-            // --- DEPOSIT SUBMISSION LOGIC (Updated to use async/await and Base64) ---
-            form.addEventListener('submit', async (e) => { // Added 'async'
-                e.preventDefault();
+            // --- Handle Payment Confirmation and Google Sheet Update ---
+            confirmPaymentBtn.addEventListener('click', async () => {
                 const amount = parseInt(amountInput.value);
-                const utr = document.getElementById('utr-input').value;
-                const accountName = document.getElementById('account-name-input').value;
-                const screenshotFile = document.getElementById('screenshot-input').files[0];
-                const submitBtn = document.getElementById('submit-deposit-btn');
-
+                
                 if (!amount || amount < 100) {
                     Toastify({ text: "❌ Please enter a valid amount (min ₹100).", duration: 3000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
                     return;
                 }
-                if (utr.length < 12 || accountName.length < 3) {
-                    Toastify({ text: "❌ Please enter valid UTR/Account Name.", duration: 3000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
-                    return;
-                }
-                
-                // Show loading state
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = `Processing...`;
 
-                // --- 1. Base64 Conversion for Screenshot ---
-                let screenshotBase64 = null;
-                if (screenshotFile) {
-                    try {
-                        // File to Base64 conversion
-                        screenshotBase64 = await toBase64(screenshotFile); 
-                    } catch (error) {
-                        Toastify({ text: "❌ Screenshot file conversion failed. Try without file.", duration: 4000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Submit UTR & Verification';
-                        return;
-                    }
-                }
-                
-                // --- 2. Prepare Data for Google Sheet ---
-                const dataToSend = {
-                    action: 'submit_deposit',
-                    // Use 'currentUser' to get the logged-in user's email
-                    userEmail: localStorage.getItem('currentUser') || 'unknown@user.com', 
-                    depositAmount: amount,
-                    utr: utr,
-                    accountName: accountName,
-                    screenshotBase64: screenshotBase64 // Send Base64 string to Apps Script
-                };
-                
-                // --- 3. Send Data to Google Apps Script (Your Backend) ---
-                fetch(DEPOSIT_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dataToSend)
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.status === 'success') {
-                        Toastify({ text: `✅ Deposit Request Submitted! Verification is pending.`, duration: 5000, gravity: "bottom", position: "right", style: { background: "linear-gradient(to right, #FFA500, #FFD700)"} }).showToast();
+                confirmPaymentBtn.disabled = true;
+                confirmPaymentBtn.innerHTML = `<svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+
+                // --- 1. CALL GAS API TO UPDATE BALANCE ---
+                try {
+                    const depositResponse = await fetch(WEB_APP_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            action: 'deposit', 
+                            identifier: userIdentifier, 
+                            amount: amount 
+                        })
+                    });
+
+                    const depositResult = await depositResponse.json();
+                    
+                    if (depositResult.status === 'success') {
+                        // --- 2. Update Local State (Only for Activity Log) ---
+                        let state = getState();
+                        state.activities.push({
+                            type: 'Deposit', 
+                            from: 'UPI Transaction', 
+                            amount: amount, 
+                            date: new Date().toISOString()
+                        });
+                        saveState(state); // Save only the activity log
+
+                        Toastify({ text: `✅ ₹${amount.toLocaleString('en-IN')} added successfully to your wallet!`, duration: 4000, gravity: "bottom", position: "right", style: { background: "linear-gradient(to right, var(--neon-2), var(--neon-1))"} }).showToast();
                         
-                        submitBtn.textContent = 'Submitted, Waiting for Credit';
+                        setTimeout(() => {
+                            window.location.href = './dashboard.html';
+                        }, 1000);
                         
                     } else {
-                        Toastify({ text: `❌ Submission failed: ${result.message}`, duration: 5000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Submit UTR & Verification';
+                        throw new Error(depositResult.message || 'API failed to update balance.');
                     }
-                })
-                .catch(error => {
-                    Toastify({ text: `❌ Network error: Could not reach server.`, duration: 5000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit UTR & Verification';
-                });
+
+                } catch (error) {
+                    console.error("Deposit failed:", error);
+                    Toastify({ text: `❌ Payment failed: ${error.message || 'Server error. Check GAS deployment.'}`, duration: 5000, gravity: "bottom", position: "right", style: { background: "red"} }).showToast();
+                    confirmPaymentBtn.disabled = false;
+                    confirmPaymentBtn.textContent = 'I have paid, Confirm';
+                }
             });
         });
     </script>
