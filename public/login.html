@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script>
-        // Auth Guard: If logged in, redirect to dashboard
         if (localStorage.getItem('isLoggedIn') === 'true') {
             window.location.href = './dashboard.html';
         }
@@ -16,10 +15,13 @@
 <body class="min-h-screen flex items-center justify-center p-4" style="background: linear-gradient(135deg, #1f2937, #0f172a);">
     <div class="w-full max-w-md">
         <div class="text-center mb-8">
-            <a class="flex items-center justify-center gap-3" href="./dashboard.html">
-                <div class="w-10 h-10 rounded-xl" style="background:linear-gradient(135deg,var(--neon-1),var(--neon-2));"></div>
-                <div class="text-3xl font-extrabold tracking-tight text-white">N2<span class="hero-gradient">Crypto</span></div>
-            </a>
+          <a class="flex items-center gap-3" href="./dashboard.html">
+    <img src="n2.png" alt="N2Crypto Logo" class="w-10 h-10 rounded-xl object-contain">
+    
+    <!-- <div>
+        <div class="text-lg font-extrabold tracking-tight">N2<span class="hero-gradient">Crypto</span></div>
+    </div> -->
+</a>
         </div>
         
         <div class="glass rounded-xl p-6 sm:p-8 border border-white/5 shadow-2xl">
@@ -28,14 +30,14 @@
             <form id="login-form" class="space-y-4">
                 <div>
                     <label for="login-username" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
-                    <input type="email" id="login-username" name="username" class="w-full px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white focus:ring-cyan-500 focus:border-cyan-500" placeholder="your@email.com" required>
+                    <input type="email" id="login-username" class="w-full px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white focus:ring-cyan-500 focus:border-cyan-500" placeholder="your@email.com" required>
                 </div>
                 <div>
                     <label for="login-password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
-                    <input type="password" id="login-password" name="password" class="w-full px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white focus:ring-cyan-500 focus:border-cyan-500" placeholder="••••••••" required>
+                    <input type="password" id="login-password" class="w-full px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white focus:ring-cyan-500 focus:border-cyan-500" placeholder="••••••••" required>
                 </div>
                 
-                <button type="submit" id="login-btn" class="w-full py-3 rounded-lg font-semibold text-white transition duration-200" style="background:linear-gradient(90deg,var(--neon-2),var(--neon-1));">
+                <button type="submit" class="w-full py-3 rounded-lg font-semibold text-white transition duration-200" style="background:linear-gradient(90deg,var(--neon-2),var(--neon-1));">
                     Sign In
                 </button>
             </form>
@@ -48,6 +50,28 @@
     </div>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="./js/app-logic.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            Toastify({ 
+                text: "Logging in...", 
+                duration: 1500, 
+                gravity: "bottom", 
+                position: "right", 
+                style: { background: "linear-gradient(to right, #00b09b, #96c93d)" }
+            }).showToast();
+
+            // Fake login: Set flag in localStorage
+            localStorage.setItem('isLoggedIn', 'true');
+            const email = e.target.querySelector('input[type="email"]').value || 'demo@user.com';
+            localStorage.setItem('userEmail', email);
+
+            // Redirect to dashboard after toast is done
+            setTimeout(() => {
+                window.location.href = './dashboard.html';
+            }, 1500);
+        });
+    </script>
 </body>
 </html>
